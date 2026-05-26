@@ -1,0 +1,55 @@
+.bar {
+  background: var(--color-green-pale);
+  border-bottom: 1px solid var(--color-border);
+  padding: 10px var(--space-lg);
+  transition: background 0.4s ease;
+}
+
+.earned {
+  background: var(--color-yellow-light);
+}
+
+.inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.msg {
+  font-size: 0.78rem;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+.msg strong {
+  color: var(--color-green);
+}
+
+.track {
+  height: 3px;
+  background: var(--color-tan);
+  border-radius: 2px;
+  overflow: hidden;
+  max-width: 320px;
+}
+
+.fill {
+  height: 100%;
+  background: var(--color-green);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}

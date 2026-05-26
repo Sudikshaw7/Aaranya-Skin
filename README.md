@@ -1,16 +1,83 @@
-# React + Vite
+# Aaranya — Skincare Landing Page
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A production-grade skincare e-commerce landing page built with React, CSS Modules, and GSAP.
 
-Currently, two official plugins are available:
+## 🗂 Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```
+src/
+├── components/
+│   ├── Navbar/          # Sticky nav with cart icon + badge, mobile menu
+│   ├── Cart/            # Slide-in cart drawer with free gift progress
+│   ├── ProductCard/     # Reusable card with GSAP hover
+│   └── FreeGiftBar/     # Dynamic free gift progress bar
+│
+├── sections/
+│   ├── Hero/            # Full-viewport hero with GSAP entrance timeline
+│   ├── OfferBanner/     # "Save 20%" discount strip
+│   ├── BestSellers/     # Filtered product grid with stagger animation
+│   ├── ProductHighlight/# Split layout with image reveal + signs list
+│   ├── Declaration/     # Brand story with parallax image
+│   ├── Community/       # Gallery grid with Instagram-style hover
+│   └── Footer/          # Email capture + vibe selector + free gift blob
+│
+├── data/
+│   └── products.js      # Mock product data (id, name, price, image, tag, category)
+│
+├── hooks/
+│   └── useAnimations.js # GSAP hooks: fadeInUp, stagger, imageReveal, parallax, heroEntrance
+│
+├── context/
+│   └── CartContext.jsx  # Cart state: add/remove/updateQty + localStorage + free gift logic
+│
+└── styles/
+    └── global.css       # CSS variables, reset, typography, utility classes
+```
 
-## React Compiler
+## 🚀 Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+## 📦 Dependencies
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **React 18** — UI framework
+- **GSAP 3 + ScrollTrigger** — all animations (fade, stagger, clip-path reveal, parallax)
+- **CSS Modules** — scoped styles per component, zero Tailwind
+
+## ✨ Features
+
+| Feature          | Implementation                                                 |
+| ---------------- | -------------------------------------------------------------- |
+| Hero animation   | GSAP timeline: eyebrow → heading → sub → CTA → card            |
+| Product hover    | GSAP `scale` on img, `translateY` + `boxShadow` on card        |
+| Image reveal     | `clip-path: inset(0 100% 0 0)` → `inset(0 0%)` on scroll       |
+| Stagger entrance | `gsap.fromTo` with `stagger: 0.12` on `.stagger-item` children |
+| Parallax         | `scrub: true` ScrollTrigger on hero image                      |
+| Cart             | Context API reducer + localStorage persistence                 |
+| Free Gift        | Dynamic progress bar — triggers at ₹999 cart value             |
+| Category filter  | Client-side filter on products array                           |
+| Email capture    | Vibe radio selector + submit state                             |
+
+## 🎨 Color System
+
+| Token            | Value     | Use                                |
+| ---------------- | --------- | ---------------------------------- |
+| `--color-cream`  | `#f7f3ee` | Section backgrounds                |
+| `--color-green`  | `#4a7c59` | Primary CTA, tags, accents         |
+| `--color-yellow` | `#d4b84a` | Hero CTA, badges, subscribe button |
+| `--color-beige`  | `#ede6dc` | Cards, offer banner, footer        |
+| `--color-text`   | `#2a2118` | Body text                          |
+
+## 🎯 GSAP Animation Map
+
+```
+useHeroEntrance    → Hero section (timeline, no ScrollTrigger — fires on load)
+useFadeInUp        → OfferBanner, headings, text blocks
+useStaggerFadeIn   → ProductCards (.stagger-item), signs list, gallery items
+useImageReveal     → ProductHighlight image, Declaration product image
+useParallax        → Hero background image (scrub)
+GSAP direct        → ProductCard hover (mouseenter/mouseleave)
+```

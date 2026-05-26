@@ -1,0 +1,144 @@
+/* ============================================
+   GLOBAL STYLES — Wildling Skincare
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
+:root {
+  /* Palette */
+  --color-cream: #f7f3ee;
+  --color-beige: #ede6dc;
+  --color-tan: #d4c5b0;
+  --color-warm-white: #faf8f5;
+  --color-green: #4a7c59;
+  --color-green-light: #6a9e78;
+  --color-green-pale: #e8efe9;
+  --color-yellow: #d4b84a;
+  --color-yellow-light: #f0e5a0;
+  --color-brown: #8b6c52;
+  --color-brown-dark: #5c4033;
+  --color-text: #2a2118;
+  --color-text-light: #7a6a5a;
+  --color-text-muted: #b0a090;
+  --color-border: #e2d9ce;
+
+  /* Typography */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Jost', 'Helvetica Neue', sans-serif;
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+  --space-3xl: 9rem;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 100px;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-base: 0.35s ease;
+  --transition-slow: 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(42, 33, 24, 0.08);
+  --shadow-md: 0 8px 24px rgba(42, 33, 24, 0.1);
+  --shadow-lg: 0 16px 48px rgba(42, 33, 24, 0.12);
+
+  /* Layout */
+  --max-width: 1280px;
+  --nav-height: 64px;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-warm-white);
+  color: var(--color-text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* ── Utility ── */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+.section-eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-green);
+  margin-bottom: var(--space-sm);
+}
+
+.section-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4vw, 3.8rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-beige);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-tan);
+  border-radius: 3px;
+}
+
+/* ── Selection ── */
+::selection {
+  background: var(--color-yellow-light);
+  color: var(--color-text);
+}
