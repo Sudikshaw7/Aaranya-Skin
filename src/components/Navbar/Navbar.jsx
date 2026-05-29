@@ -1,138 +1,98 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
-import CartDrawer from "../Cart/CartDrawer";
 import styles from "./Navbar.module.css";
 
-const navLinks = [
-  { label: "Shop", href: "#bestsellers" },
-  { label: "Rituals", href: "#highlight" },
-  { label: "Learn", href: "#signs" },
-  { label: "Rewards", href: "#community" },
-  { label: "Offers", href: "#" },
+const NAV_LINKS = [
+  { label: "Shop All", href: "#bestsellers" },
+  { label: "Rituals", href: "#ritual" },
+  { label: "Our Story", href: "#story" },
+  { label: "Community", href: "#community" },
 ];
 
 export default function Navbar() {
-  const { totalItems } = useCart();
+  const { itemCount, setIsOpen } = useCart();
   const [scrolled, setScrolled] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const bannerRef = useRef(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
     <>
-      {/* Announcement Banner */}
-      <div className={styles.banner} ref={bannerRef}>
-        <p>
-          Free shipping in us on order over $99 — <a href="#">shop now</a>
-        </p>
-      </div>
-
-      <header className={`${styles.nav} ${scrolled ? styles.navScrolled : ""}`}>
+      <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ""}`}>
         <div className={styles.inner}>
-          {/* Logo */}
-          <a href="/" className={styles.logo}>
-            Aaranya
+          {/* Mobile menu toggle */}
+          <button
+            className={styles.menuBtn}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span className={`${styles.bar} ${menuOpen ? styles.open : ""}`} />
+            <span className={`${styles.bar} ${menuOpen ? styles.open : ""}`} />
+            <span className={`${styles.bar} ${menuOpen ? styles.open : ""}`} />
+          </button>
+
+          {/* Desktop nav links left */}
+          <ul className={styles.linksLeft}>
+            {NAV_LINKS.slice(0, 2).map((l) => (
+              <li key={l.label}>
+                <a href={l.href} className={styles.link}>{l.label}</a>
+              </li>
+            ))}
+          </ul>
+
+          {/* Logo center */}
+          <a href="#" className={styles.logo}>
+            <span className={styles.logoMain}>Aaranya</span>
+            <span className={styles.logoSub}>skin rituals</span>
           </a>
 
-          {/* Desktop Links */}
-          <nav className={styles.links}>
-            {navLinks.map((l) => (
-              <a key={l.label} href={l.href} className={styles.link}>
-                {l.label}
-              </a>
+          {/* Desktop nav links right */}
+          <ul className={styles.linksRight}>
+            {NAV_LINKS.slice(2).map((l) => (
+              <li key={l.label}>
+                <a href={l.href} className={styles.link}>{l.label}</a>
+              </li>
             ))}
-          </nav>
+          </ul>
 
-          {/* Actions */}
-          <div className={styles.actions}>
-            <button className={styles.iconBtn} aria-label="Search">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-            </button>
-            <button
-              className={styles.iconBtn}
-              aria-label={`Cart (${totalItems} items)`}
-              onClick={() => setCartOpen(true)}
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <path d="M16 10a4 4 0 0 1-8 0" />
-              </svg>
-              {totalItems > 0 && (
-                <span className={styles.badge}>{totalItems}</span>
-              )}
-            </button>
-            <button
-              className={`${styles.iconBtn} ${styles.menuBtn}`}
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Menu"
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                {menuOpen ? (
-                  <>
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </>
-                ) : (
-                  <>
-                    <line x1="3" y1="6" x2="21" y2="6" />
-                    <line x1="3" y1="12" x2="21" y2="12" />
-                    <line x1="3" y1="18" x2="21" y2="18" />
-                  </>
-                )}
-              </svg>
-            </button>
-          </div>
+          {/* Cart */}
+          <button
+            className={styles.cartBtn}
+            onClick={() => setIsOpen(true)}
+            aria-label="Open cart"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 01-8 0" />
+            </svg>
+            {itemCount > 0 && (
+              <span className={styles.badge}>{itemCount}</span>
+            )}
+          </button>
         </div>
+      </nav>
 
-        {/* Mobile Menu */}
-        {menuOpen && (
-          <nav className={styles.mobileMenu}>
-            {navLinks.map((l) => (
-              <a
-                key={l.label}
-                href={l.href}
-                className={styles.mobileLink}
-                onClick={() => setMenuOpen(false)}
-              >
+      {/* Mobile menu */}
+      <div className={`${styles.mobileMenu} ${menuOpen ? styles.mobileOpen : ""}`}>
+        <ul>
+          {NAV_LINKS.map((l) => (
+            <li key={l.label}>
+              <a href={l.href} onClick={() => setMenuOpen(false)} className={styles.mobileLink}>
                 {l.label}
               </a>
-            ))}
-          </nav>
-        )}
-      </header>
-
-      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+            </li>
+          ))}
+        </ul>
+        <div className={styles.mobileMeta}>
+          <a href="#" className={styles.mobileSmall}>Track Order</a>
+          <a href="#" className={styles.mobileSmall}>Contact</a>
+        </div>
+      </div>
     </>
   );
 }

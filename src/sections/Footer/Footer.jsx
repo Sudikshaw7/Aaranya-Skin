@@ -1,128 +1,153 @@
-import { useState, useRef } from "react";
-import { useFadeInUp } from "../../hooks/useAnimations";
+import { useState } from "react";
 import styles from "./Footer.module.css";
 
-const footerLinks = {
-  "Find Your Routine": [
-    "Why Plastic Free?",
-    "The Green Room",
-    "FAQ",
-    "Shipping & Returns",
-    "Wholesale",
-    "Store Locator",
-    "Contact",
-  ],
-};
-
-const vibes = [
-  "Gentle and floral",
-  "Wild and woodsy",
-  "Balanced and earthy",
-  "Fun and fruity",
-];
+const VIBES = ["Hydration Goals", "Anti-Ageing", "Clear Skin", "Natural Glow", "Sensitive Care"];
 
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [vibe, setVibe] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const formRef = useRef(null);
+  const [error, setError] = useState("");
 
-  useFadeInUp(formRef, { y: 28, start: "top 90%" });
-
-  const handleSubmit = (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email || !email.includes("@")) {
+      setError("Please enter a valid email.");
+      return;
+    }
+    setError("");
     setSubmitted(true);
     setEmail("");
-  };
+    setVibe("");
+  }
 
   return (
     <footer className={styles.footer}>
-      <div className={styles.top}>
-        <div className={styles.container}>
-          {/* Brand */}
-          <div className={styles.brand}>
-            <span className={styles.logo}>Aaranya</span>
-            <p className={styles.tagline}>More Pure Glow</p>
-          </div>
+      {/* Newsletter section */}
+      <div className={styles.newsletter}>
+        <div className="container">
+          <div className={styles.nlInner}>
+            <div className={styles.nlLeft}>
+              <span className="eyebrow" style={{ color: "var(--clay-light)" }}>Stay Connected</span>
+              <h2 className={styles.nlHeading}>
+                Join the ritual.<br />
+                <em>10% off your first order.</em>
+              </h2>
+              <p className={styles.nlSub}>
+                Weekly tips, new launches, and exclusive member offers - curated for your skin type.
+              </p>
+            </div>
 
-          {/* Links */}
-          {Object.entries(footerLinks).map(([group, links]) => (
-            <div key={group} className={styles.linkGroup}>
-              <h4 className={styles.groupTitle}>{group}</h4>
-              <ul className={styles.linkList}>
-                {links.map((l) => (
-                  <li key={l}>
-                    <a href="#" className={styles.footLink}>
-                      {l}
-                    </a>
-                  </li>
+            <div className={styles.nlRight}>
+              {submitted ? (
+                <div className={styles.success}>
+                  <div className={styles.successIcon}>🌿</div>
+                  <h3>You're in!</h3>
+                  <p>Your 10% discount code is on its way to your inbox.</p>
+                </div>
+              ) : (
+                <form className={styles.form} onSubmit={handleSubmit}>
+                  <p className={styles.vibeLabel}>What's your skin goal?</p>
+                  <div className={styles.vibes}>
+                    {VIBES.map((v) => (
+                      <button
+                        key={v}
+                        type="button"
+                        className={`${styles.vibeBtn} ${vibe === v ? styles.vibeActive : ""}`}
+                        onClick={() => setVibe(vibe === v ? "" : v)}
+                      >
+                        {v}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className={styles.inputRow}>
+                    <input
+                      type="email"
+                      placeholder="Your email address"
+                      className={styles.input}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <button type="submit" className={styles.submitBtn}>
+                      Subscribe
+                    </button>
+                  </div>
+                  {error && <p className={styles.error}>{error}</p>}
+                  <p className={styles.disclaimer}>No spam, ever. Unsubscribe anytime.</p>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main footer */}
+      <div className={styles.main}>
+        <div className="container">
+          <div className={styles.grid}>
+            {/* Brand */}
+            <div className={styles.brand}>
+              <span className={styles.logo}>Aaranya</span>
+              <p className={styles.brandTagline}>
+                Rooted in nature. Crafted with care. Made in India.
+              </p>
+              <div className={styles.socials}>
+                {["instagram", "youtube", "twitter"].map((s) => (
+                  <a key={s} href="#" className={styles.social} aria-label={s}>
+                    <div className={styles.socialIcon} />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Shop */}
+            <div className={styles.col}>
+              <h4 className={styles.colTitle}>Shop</h4>
+              <ul className={styles.colLinks}>
+                {["All Products", "Serums", "Moisturisers", "Facial Oils", "Masks & Toners", "Bundles", "Gift Sets"].map((l) => (
+                  <li key={l}><a href="#">{l}</a></li>
                 ))}
               </ul>
             </div>
-          ))}
 
-          {/* Email capture */}
-          <div className={styles.emailCol} ref={formRef}>
-            <p className={styles.emailIntro}>
-              Sign up to receive 15% off your order, plus be the first to hear
-              about product releases, flash sales, and exclusive offers.
-            </p>
-
-            <p className={styles.vibeLabel}>What's your vibe?</p>
-            <div className={styles.vibes}>
-              {vibes.map((v) => (
-                <label
-                  key={v}
-                  className={`${styles.vibeOption} ${vibe === v ? styles.vibeSelected : ""}`}
-                >
-                  <input
-                    type="radio"
-                    name="vibe"
-                    value={v}
-                    checked={vibe === v}
-                    onChange={() => setVibe(v)}
-                    className={styles.vibeRadio}
-                  />
-                  {v}
-                </label>
-              ))}
+            {/* Help */}
+            <div className={styles.col}>
+              <h4 className={styles.colTitle}>Help</h4>
+              <ul className={styles.colLinks}>
+                {["Track Order", "Returns & Exchanges", "FAQ", "Skin Quiz", "Contact Us", "Wholesale"].map((l) => (
+                  <li key={l}><a href="#">{l}</a></li>
+                ))}
+              </ul>
             </div>
 
-            {submitted ? (
-              <p className={styles.thankYou}>🌿 You're in! Check your inbox.</p>
-            ) : (
-              <form onSubmit={handleSubmit} className={styles.emailForm}>
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={styles.emailInput}
-                  required
-                />
-                <button type="submit" className={styles.subscribeBtn}>
-                  Subscribe
-                </button>
-              </form>
-            )}
+            {/* Company */}
+            <div className={styles.col}>
+              <h4 className={styles.colTitle}>Company</h4>
+              <ul className={styles.colLinks}>
+                {["Our Story", "Ingredients", "Sustainability", "Blog", "Press", "Careers"].map((l) => (
+                  <li key={l}><a href="#">{l}</a></li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Free Gift blob */}
-      <div className={styles.giftBlob}>
-        <div className={styles.blobInner}>
-          <p className={styles.blobText}>Have a Question?</p>
-          <p className={styles.blobSub}>About Us Text & We'll Respond ASAP</p>
-        </div>
-      </div>
-
-      <div className={styles.bottom}>
-        <span>© Copyright 2025 Aaranya</span>
-        <div className={styles.bottomLinks}>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms & Conditions</a>
+          {/* Bottom bar */}
+          <div className={styles.bottom}>
+            <p className={styles.copy}>
+              © 2025 Aaranya Skin Rituals Pvt Ltd. Proudly made in India.
+            </p>
+            <div className={styles.legal}>
+              <a href="#">Privacy Policy</a>
+              <a href="#">Terms of Use</a>
+              <a href="#">Cookie Preferences</a>
+            </div>
+            <div className={styles.certifications}>
+              <span>🌿 Vegan</span>
+              <span>🐰 Cruelty-Free</span>
+              <span>♻️ Recyclable</span>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

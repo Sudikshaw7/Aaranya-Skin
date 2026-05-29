@@ -44,7 +44,7 @@ export default function CartDrawer({ isOpen, onClose }) {
         <div className={styles.giftBanner}>
           {freeGiftEarned ? (
             <p className={styles.giftEarned}>
-              🎁 You've earned a <strong>free gift</strong>! Added at checkout.
+              You've earned a <strong>free gift</strong>! Added at checkout.
             </p>
           ) : (
             <div>
@@ -111,7 +111,7 @@ export default function CartDrawer({ isOpen, onClose }) {
             </div>
             {freeGiftEarned && (
               <div className={styles.giftLine}>
-                <span>🎁 Free Gift</span>
+                <span>Free Gift</span>
                 <span className={styles.free}>FREE</span>
               </div>
             )}
