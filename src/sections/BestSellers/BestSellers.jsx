@@ -1,46 +1,67 @@
-import { useRef, useState } from "react";
-import { useStaggerFadeIn, useFadeInUp } from "../../hooks/useAnimations";
+import { useState, useRef } from "react";
+import { products, categories } from "../../data/products";
 import ProductCard from "../../components/ProductCard/ProductCard";
-import { products } from "../../data/products";
 import styles from "./BestSellers.module.css";
 
-const categories = ["All", "Skincare", "Tools", "Sets"];
-
 export default function BestSellers() {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const headingRef = useRef(null);
+  const [activeCategory, setActiveCategory] = useState("all");
   const gridRef = useRef(null);
 
-  useFadeInUp(headingRef, { y: 32 });
-  useStaggerFadeIn(gridRef);
+  const filtered = activeCategory === "all"
+    ? products
+    : products.filter((p) => p.category === activeCategory);
 
-  const filtered =
-    activeCategory === "All"
-      ? products
-      : products.filter((p) => p.category === activeCategory);
+  function handleFilter(cat) {
+    setActiveCategory(cat);
+  }
 
   return (
     <section className={styles.section} id="bestsellers">
       <div className="container">
-        <div className={styles.header} ref={headingRef}>
-          <h2 className={styles.heading}>Best Sellers</h2>
-          <div className={styles.tabs}>
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                className={`${styles.tab} ${activeCategory === cat ? styles.tabActive : ""}`}
-                onClick={() => setActiveCategory(cat)}
-              >
-                {cat}
-              </button>
-            ))}
+        {/* Header */}
+        <div className={styles.header}>
+          <div>
+            <span className="eyebrow">Our Products</span>
+            <h2 className={`section-heading ${styles.heading}`}>
+              Meet your new<br />
+              <em>daily rituals</em>
+            </h2>
           </div>
+          <p className={styles.desc}>
+            Every formula is meticulously crafted from Ayurvedic botanicals,
+            clinically validated, and thoughtfully packaged without waste.
+          </p>
         </div>
 
-        <div className={styles.grid} ref={gridRef}>
-          {filtered.map((product) => (
-            <ProductCard key={product.id} product={product} />
+        {/* Category filters */}
+        <div className={styles.filters}>
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              className={`${styles.filter} ${activeCategory === cat.id ? styles.active : ""}`}
+              onClick={() => handleFilter(cat.id)}
+            >
+              {cat.label}
+              {activeCategory === cat.id && (
+                <span className={styles.filterCount}>
+                  {cat.id === "all" ? products.length : products.filter(p => p.category === cat.id).length}
+                </span>
+              )}
+            </button>
           ))}
+        </div>
+
+        {/* Grid */}
+        <div className={styles.grid} ref={gridRef}>
+          {filtered.map((product, i) => (
+            <ProductCard key={product.id} product={product} index={i} />
+          ))}
+        </div>
+
+        {/* Load more CTA */}
+        <div className={styles.bottomCta}>
+          <p className={styles.bottomText}>Looking for something specific?</p>
+          <a href="#" className="btn-outline">View Full Catalogue</a>
         </div>
       </div>
     </section>

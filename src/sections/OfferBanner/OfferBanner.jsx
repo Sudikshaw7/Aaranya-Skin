@@ -1,20 +1,23 @@
-import { useRef } from "react";
-import { useFadeInUp } from "../../hooks/useAnimations";
 import styles from "./OfferBanner.module.css";
 
 export default function OfferBanner() {
-  const ref = useRef(null);
-  useFadeInUp(ref, { y: 30, duration: 0.7 });
-
   return (
-    <div className={styles.banner} ref={ref}>
+    <div className={styles.banner}>
       <div className={styles.inner}>
-        <span className={styles.tag}>Limited Time</span>
-        <p className={styles.text}>
-          Save <strong>20%</strong> on your first order — use code{" "}
-          <span className={styles.code}>WILDGLOW</span>
-        </p>
-        <a href="#bestsellers" className={styles.cta}>Shop Now →</a>
+        <div className={styles.offer}>
+          <span className={styles.icon}>🌿</span>
+          <span>Use code <strong>RITUAL20</strong> for 20% off your first order</span>
+        </div>
+        <div className={styles.divider} />
+        <div className={styles.offer}>
+          <span className={styles.icon}>✦</span>
+          <span>Free shipping on orders above <strong>₹799</strong></span>
+        </div>
+        <div className={styles.divider} />
+        <div className={styles.offer}>
+          <span className={styles.icon}>🎁</span>
+          <span>Free Lip Balm on orders above <strong>₹1,999</strong></span>
+        </div>
       </div>
     </div>
   );

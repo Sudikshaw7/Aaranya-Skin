@@ -1,197 +1,74 @@
-import {
-  createContext,
-  useContext,
-  useReducer,
-  useEffect,
-} from "react";
+import { createContext, useContext, useReducer, useEffect, useState } from "react";
 
-const CartContext = createContext();
+const CartContext = createContext(null);
 
-const FREE_GIFT_THRESHOLD = 999;
-
-const initialState = {
-  items: [],
-};
+const FREE_GIFT_THRESHOLD = 1999;
 
 function cartReducer(state, action) {
   switch (action.type) {
     case "ADD_ITEM": {
-      const existingItem = state.items.find(
-        (item) => item.id === action.payload.id
-      );
-
-      if (existingItem) {
-        return {
-          ...state,
-          items: state.items.map((item) =>
-            item.id === action.payload.id
-              ? {
-                  ...item,
-                  quantity: item.quantity + 1,
-                }
-              : item
-          ),
-        };
+      const exists = state.find((i) => i.id === action.product.id);
+      if (exists) {
+        return state.map((i) =>
+          i.id === action.product.id ? { ...i, qty: i.qty + 1 } : i
+        );
       }
-
-      return {
-        ...state,
-        items: [
-          ...state.items,
-          {
-            ...action.payload,
-            quantity: 1,
-          },
-        ],
-      };
+      return [...state, { ...action.product, qty: 1 }];
     }
-
     case "REMOVE_ITEM":
-      return {
-        ...state,
-        items: state.items.filter(
-          (item) => item.id !== action.payload
-        ),
-      };
-
-    case "UPDATE_QUANTITY":
-      return {
-        ...state,
-        items: state.items
-          .map((item) =>
-            item.id === action.payload.id
-              ? {
-                  ...item,
-                  quantity: action.payload.quantity,
-                }
-              : item
-          )
-          .filter((item) => item.quantity > 0),
-      };
-
+      return state.filter((i) => i.id !== action.id);
+    case "UPDATE_QTY":
+      if (action.qty <= 0) return state.filter((i) => i.id !== action.id);
+      return state.map((i) => (i.id === action.id ? { ...i, qty: action.qty } : i));
     case "CLEAR_CART":
-      return {
-        ...state,
-        items: [],
-      };
-
-    case "LOAD_CART":
-      return {
-        ...state,
-        items: Array.isArray(action.payload)
-          ? action.payload
-          : [],
-      };
-
+      return [];
+    case "SET_ITEMS":
+      return action.items;
     default:
       return state;
   }
 }
 
 export function CartProvider({ children }) {
-  const [state, dispatch] = useReducer(
-    cartReducer,
-    initialState
-  );
+  const [items, dispatch] = useReducer(cartReducer, []);
+  const [isOpen, setIsOpen] = useState(false);
+  const [justAdded, setJustAdded] = useState(null);
 
-  // Load cart from localStorage
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
     try {
-      const savedCart = localStorage.getItem(
-        "wildling_cart"
-      );
-
-      if (savedCart) {
-        dispatch({
-          type: "LOAD_CART",
-          payload: JSON.parse(savedCart),
-        });
-      }
-    } catch (error) {
-      console.error("Failed to load cart:", error);
-    }
+      const saved = localStorage.getItem("aaranya-cart");
+      if (saved) dispatch({ type: "SET_ITEMS", items: JSON.parse(saved) });
+    } catch {}
   }, []);
 
-  // Save cart to localStorage
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    localStorage.setItem("aaranya-cart", JSON.stringify(items));
+  }, [items]);
 
-    try {
-      localStorage.setItem(
-        "wildling_cart",
-        JSON.stringify(state.items)
-      );
-    } catch (error) {
-      console.error("Failed to save cart:", error);
-    }
-  }, [state.items]);
+  const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const itemCount = items.reduce((s, i) => s + i.qty, 0);
+  const freeGiftProgress = Math.min((total / FREE_GIFT_THRESHOLD) * 100, 100);
+  const freeGiftUnlocked = total >= FREE_GIFT_THRESHOLD;
+  const amountToFreeGift = Math.max(FREE_GIFT_THRESHOLD - total, 0);
 
-  // Totals
-  const totalItems = state.items.reduce(
-    (total, item) => total + item.quantity,
-    0
-  );
+  function addItem(product) {
+    dispatch({ type: "ADD_ITEM", product });
+    setJustAdded(product.id);
+    setIsOpen(true);
+    setTimeout(() => setJustAdded(null), 2000);
+  }
 
-  const totalPrice = state.items.reduce(
-    (total, item) =>
-      total + item.price * item.quantity,
-    0
-  );
-
-  const freeGiftEarned =
-    totalPrice >= FREE_GIFT_THRESHOLD;
-
-  const remainingForGift = Math.max(
-    0,
-    FREE_GIFT_THRESHOLD - totalPrice
-  );
-
-  // Actions
-  const addItem = (product) => {
-    dispatch({
-      type: "ADD_ITEM",
-      payload: product,
-    });
-  };
-
-  const removeItem = (id) => {
-    dispatch({
-      type: "REMOVE_ITEM",
-      payload: id,
-    });
-  };
-
-  const updateQuantity = (id, quantity) => {
-    dispatch({
-      type: "UPDATE_QUANTITY",
-      payload: {
-        id,
-        quantity,
-      },
-    });
-  };
-
-  const clearCart = () => {
-    dispatch({
-      type: "CLEAR_CART",
-    });
-  };
+  function removeItem(id) { dispatch({ type: "REMOVE_ITEM", id }); }
+  function updateQty(id, qty) { dispatch({ type: "UPDATE_QTY", id, qty }); }
+  function clearCart() { dispatch({ type: "CLEAR_CART" }); }
 
   return (
     <CartContext.Provider
       value={{
-        items: state.items,
-        totalItems,
-        totalPrice,
-        freeGiftEarned,
-        remainingForGift,
-        FREE_GIFT_THRESHOLD,
-        addItem,
-        removeItem,
-        updateQuantity,
-        clearCart,
+        items, total, itemCount, freeGiftProgress,
+        freeGiftUnlocked, amountToFreeGift,
+        isOpen, setIsOpen, justAdded,
+        addItem, removeItem, updateQty, clearCart,
       }}
     >
       {children}
@@ -200,13 +77,7 @@ export function CartProvider({ children }) {
 }
 
 export function useCart() {
-  const context = useContext(CartContext);
-
-  if (!context) {
-    throw new Error(
-      "useCart must be used within CartProvider"
-    );
-  }
-
-  return context;
+  const ctx = useContext(CartContext);
+  if (!ctx) throw new Error("useCart must be inside CartProvider");
+  return ctx;
 }
